@@ -1,6 +1,6 @@
 /**
  * fwdmodel_pet.cc
- * 
+ *
  * Implementation of one tissue compartment model for PET
  * Moss Zhao - Center for Advanced Functional Neuroimaging (CAFN), Stanford University
 
@@ -13,8 +13,7 @@
 
 #include <miscmaths/miscprob.h>
 #include <newimage/newimageall.h>
-
-#include <newmatio.h>
+#include <armawrap/newmat.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -32,7 +31,7 @@ static OptionSpec OPTIONS[] = {
     { "time-data", OPT_MATRIX,
         "File containing single-column ASCII data defining the timing information.",
         OPT_NONREQ, "none" },
-    /*    
+    /*
     { "delt", OPT_FLOAT, "Time resolution between volumes, in minutes", OPT_REQ, "" },
     { "fa", OPT_FLOAT, "Flip angle in degrees.", OPT_REQ, "" },
     { "tr", OPT_FLOAT, "Repetition time (TR) In seconds.", OPT_REQ, "" },
@@ -77,7 +76,7 @@ void PETFwdModel::Initialize(FabberRunData &rundata)
     // AIF
     m_aif_type = rundata.GetString("aif");
     if (m_aif_type == "signal")
-    {   
+    {
         // Read in AIF signal from text file
         m_aif = read_ascii_matrix(rundata.GetString("aif-data"));
         m_time = read_ascii_matrix(rundata.GetString("time-data"));
