@@ -2,24 +2,12 @@ include ${FSLCONFDIR}/default.mk
 
 PROJNAME = fabber_pet
 
-USRINCFLAGS = -I${INC_NEWMAT} -I${INC_PROB} -I${INC_CPROB} -I${INC_BOOST} -I..
-USRLDFLAGS = -L${LIB_NEWMAT} -L${LIB_PROB} -L../fabber_core
+LIBS = -lfsl-fabberexec -lfsl-fabbercore -lfsl-newimage \
+       -lfsl-miscmaths -lfsl-cprob -lfsl-utils \
+       -lfsl-NewNifti -lfsl-znz -lz -ldl
 
-FSLVERSION= $(shell cat ${FSLDIR}/etc/fslversion | head -c 1)
-ifeq ($(FSLVERSION), 5) 
-  NIFTILIB = -lfslio -lniftiio 
-  MATLIB = -lnewmat
-else 
-  UNAME := $(shell uname -s)
-  ifeq ($(UNAME), Linux)
-    MATLIB = -lopenblas
-  endif
-  NIFTILIB = -lNewNifti
-endif
-
-LIBS = -lutils -lnewimage -lmiscmaths -lprob ${MATLIB} ${NIFTILIB} -lznz -lz -ldl
-
-XFILES = fabber_pet
+XFILES  = fabber_pet
+SOFILES = libfsl-fabber_models_pet.so
 
 # Forward models
 OBJS =  fwdmodel_pet.o fwdmodel_pet_1TCM.o
@@ -36,14 +24,14 @@ CXXFLAGS += -DGIT_SHA1=\"${GIT_SHA1}\" -DGIT_DATE="\"${GIT_DATE}\""
 # Build
 #
 
-all:	${XFILES} libfabbermodels_pet.a
+all:	${XFILES} ${SOFILES}
 
 # models in a library
-libfabbermodels_pet.a : ${OBJS}
-	${AR} -r $@ ${OBJS}
+libfsl-fabber_models_pet.so : ${OBJS}
+	${CXX} ${CXXFLAGS} -shared -o $@ $^ ${LDFLAGS}
 
 # fabber built from the FSL fabbercore library including the models specifieid in this project
-fabber_pet : fabber_client.o ${OBJS}
-	${CXX} ${CXXFLAGS} ${LDFLAGS} -o $@ $< ${OBJS} -lfabbercore -lfabberexec ${LIBS}
+fabber_pet : fabber_client.o libfsl-fabber_models_pet.so
+	${CXX} ${CXXFLAGS} -o $@ $< -lfsl-fabber_models_pet ${LDFLAGS}
 
 # DO NOT DELETE
