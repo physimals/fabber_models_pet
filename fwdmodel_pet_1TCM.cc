@@ -19,6 +19,7 @@
 #include <iostream>
 #include <stdexcept>
 
+using namespace std;
 using namespace NEWMAT;
 
 FactoryRegistration<FwdModelFactory, PET_1TCM_FwdModel> PET_1TCM_FwdModel::registration("pet_1TCM");
@@ -202,7 +203,7 @@ void PET_1TCM_FwdModel::Evaluate(const ColumnVector &params, ColumnVector &resul
     //}
 
 
-    ColumnVector exp_results = exp((-k2) * m_time);
+    ColumnVector exp_results = MISCMATHS::exp((-k2) * m_time);
 
     ColumnVector convolution_result = compute_convolution(exp_results, m_aif, m_time);
 

@@ -18,7 +18,9 @@
 #include <iostream>
 #include <stdexcept>
 
+using namespace std;
 using namespace NEWMAT;
+using MISCMATHS::read_ascii_matrix;
 
 static OptionSpec OPTIONS[] = {
     { "K1", OPT_FLOAT, "K1 transfer rate", OPT_REQ, "" },
