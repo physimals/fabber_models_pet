@@ -31,7 +31,7 @@ libfsl-fabber_models_pet.so : ${OBJS}
 	${CXX} ${CXXFLAGS} -shared -o $@ $^ ${LDFLAGS}
 
 # fabber built from the FSL fabbercore library including the models specifieid in this project
-fabber_pet : fabber_client.o libfsl-fabber_models_pet.so
+fabber_pet : fabber_client.o | libfsl-fabber_models_pet.so
 	${CXX} ${CXXFLAGS} -o $@ $< -lfsl-fabber_models_pet ${LDFLAGS}
 
 # DO NOT DELETE
