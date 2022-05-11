@@ -14,12 +14,12 @@
 
 #include <miscmaths/miscprob.h>
 #include <newimage/newimageall.h>
-
-#include <newmatio.h>
+#include <armawrap/newmat.h>
 
 #include <iostream>
 #include <stdexcept>
 
+using namespace std;
 using namespace NEWMAT;
 
 FactoryRegistration<FwdModelFactory, PET_1TCM_FwdModel> PET_1TCM_FwdModel::registration("pet_1TCM");
@@ -79,7 +79,7 @@ void PET_1TCM_FwdModel::GetParameterDefaults(std::vector<Parameter> &params) con
     //params.push_back(Parameter(p++, "K1", DistParams(m_K1, 1e5), DistParams(m_K1, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
     //params.push_back(Parameter(p++, "k2", DistParams(m_k2, 1e5), DistParams(m_k2, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
     //params.push_back(Parameter(p++, "vB", DistParams(m_vB, 1e5), DistParams(m_vB, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
-    
+
 
     params.push_back(Parameter(p++, "K1", DistParams(m_K1, 100), DistParams(m_K1, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
     params.push_back(Parameter(p++, "k2", DistParams(m_k2, 100), DistParams(m_k2, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
@@ -88,7 +88,7 @@ void PET_1TCM_FwdModel::GetParameterDefaults(std::vector<Parameter> &params) con
     //params.push_back(Parameter(p++, "ps", DistParams(m_ps, 1e5), DistParams(m_ps, 100), PRIOR_NORMAL, TRANSFORM_LOG()));
     //params.push_back(Parameter(p++, "ve", DistParams(m_ve, 1e5), DistParams(m_ve, 1), PRIOR_NORMAL, TRANSFORM_FRACTIONAL()));
     //params.push_back(Parameter(p++, "vp", DistParams(m_vp, 1), DistParams(m_vp, 1), PRIOR_NORMAL, TRANSFORM_FRACTIONAL()));
-    
+
     // Standard DCE parameters
     PETFwdModel::GetParameterDefaults(params);
 }
@@ -124,7 +124,7 @@ ColumnVector PET_1TCM_FwdModel::compute_convolution(const ColumnVector &vector_1
             }
             i1 = i1 - 1;
             convolution_full(i + 1) = temp;
-        }  
+        }
     }
 
     // Do the 'same' operation for the final convolution results
@@ -147,10 +147,10 @@ ColumnVector PET_1TCM_FwdModel::compute_convolution(const ColumnVector &vector_1
             convolution_result(i) = (vector_time(i) - vector_time(i - 1)) * convolution_full(i);
         }
         */
-        
+
         convolution_result(i) = convolution_full(i);
-    }  
-    
+    }
+
     return convolution_result;
 }
 
@@ -203,15 +203,15 @@ void PET_1TCM_FwdModel::Evaluate(const ColumnVector &params, ColumnVector &resul
     //}
 
 
-    ColumnVector exp_results = exp((-k2) * m_time);
+    ColumnVector exp_results = MISCMATHS::exp((-k2) * m_time);
 
     ColumnVector convolution_result = compute_convolution(exp_results, m_aif, m_time);
-    
+
     // Converts concentration back to DCE signal
     /*
     result.ReSize(data.Nrows());
     for (int i = 1; i <= data.Nrows(); i++)
-    {   
+    {
         result(i) = SignalFromConcentration(concentration_tissue(i), t10, sig0);
     }
     */
